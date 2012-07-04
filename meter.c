@@ -32,13 +32,16 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	gdouble cx = width / 2.0;
 	gdouble cy = height / 2.0;
 	gdouble radius = MIN (width/2, height/2) - 5;
+	gdouble ny = cy + radius * 0.9;
 	GtkMeterPrivate *priv = GTK_METER_GET_PRIVATE (meter);
 	gdouble low = priv->low;
 	gdouble high = priv->high;
 	gdouble value = priv->value;
-	gdouble theta = (((value - low) / (high - low)) * 1.5 - 0.75) * M_PI;
+	gdouble theta = (((value - low) / (high - low)) * 0.5 - 0.25) * M_PI;
 	cairo_text_extents_t extents;
 	gchar *name = priv->name;
+	gdouble inc;
+	cairo_pattern_t *pat;
 
 	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
 	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
@@ -48,9 +51,32 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_stroke (cr);
 
-	cairo_arc (cr, cx, cy, radius, 0.25 * M_PI, 0.75 * M_PI);
-	cairo_line_to (cr, cx, cy);
-	cairo_close_path (cr);
+	for (inc = -0.25; inc <= 0.25; inc += 0.05)
+	{
+		cairo_move_to (cr, cx + radius * 1.2 * sin (inc * M_PI),
+				ny + radius * 1.2 * -cos (inc * M_PI));
+		cairo_line_to (cr, cx + radius * 1.25 * sin (inc * M_PI),
+				ny + radius * 1.25 * -cos (inc * M_PI));
+		cairo_stroke (cr);
+	}
+
+	cairo_set_source_rgb (cr, 1, 0, 0);
+	cairo_move_to (cr, cx, ny);
+	cairo_line_to (cr, cx + radius * sin (theta),
+			ny + radius * -cos (theta));
+	cairo_stroke (cr);
+
+	pat = cairo_pattern_create_radial (cx, cy, radius,
+                                   0,  0, radius);
+	cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 1, 0.2);
+	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.3);
+	cairo_set_source (cr, pat);
+	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
+	cairo_fill (cr);
+	cairo_pattern_destroy (pat);
+
+	cairo_set_source_rgb (cr, 0, 0, 0);
+	cairo_arc (cr, cx, cy, radius, 0.1 * M_PI, 0.9 * M_PI);
 	cairo_fill (cr);
 
 	cairo_set_source_rgb (cr, 1, 1, 1);
@@ -60,12 +86,6 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_move_to (cr, cx - (extents.width/2 + extents.x_bearing),
 			cy + radius / 2.0);
 	cairo_show_text (cr, name);
-
-	cairo_set_source_rgb (cr, 1, 0, 0);
-	cairo_move_to (cr, cx, cy);
-	cairo_line_to (cr, cx + radius * 0.75 * sin (theta),
-			cy + radius * 0.75 * -cos (theta));
-	cairo_stroke (cr);
 
 	return TRUE;
 }
