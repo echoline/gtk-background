@@ -4,6 +4,7 @@
 #include "launcher.h"
 #include "tray.h"
 #include "meter.h"
+#include "info.h"
 
 int
 main (int argc, char **argv)
@@ -44,11 +45,11 @@ main (int argc, char **argv)
 	gtk_widget_set_size_request (clock, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), clock, width - 175, height - 175);
 
-	cpumeter = gtk_meter_new ("cpu");
+	cpumeter = cpu_init ();
 	gtk_widget_set_size_request (cpumeter, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), cpumeter, width - 175, 25);
 
-	memmeter = gtk_meter_new ("mem");
+	memmeter = mem_init ();
 	gtk_widget_set_size_request (memmeter, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
 

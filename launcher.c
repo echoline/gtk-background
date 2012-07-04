@@ -41,6 +41,7 @@ list_load(GtkListStore *store)
 			i++;
 		}
 		g_strfreev(lines);
+		g_free(contents);
 	}
 	g_free(conf);
 }
