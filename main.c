@@ -51,7 +51,7 @@ main (int argc, char **argv)
 
 	memmeter = mem_init ();
 	gtk_widget_set_size_request (memmeter, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
+	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 200);
 
 	tray = gtk_tray_new ();
 	gtk_fixed_put (GTK_FIXED (fixed), tray, 25, height - 100);
