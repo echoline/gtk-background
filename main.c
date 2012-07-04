@@ -3,6 +3,7 @@
 #include "clock.h"
 #include "launcher.h"
 #include "tray.h"
+#include "meter.h"
 
 int
 main (int argc, char **argv)
@@ -11,6 +12,8 @@ main (int argc, char **argv)
 	GtkWidget *fixed;
 	GtkWidget *clock;
 	GtkWidget *tray;
+	GtkWidget *cpumeter;
+	GtkWidget *memmeter;
 	GtkWidget *launcher;
 	gint width;
 	gint height;
@@ -40,6 +43,14 @@ main (int argc, char **argv)
 	clock = gtk_clock_new ();
 	gtk_widget_set_size_request (clock, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), clock, width - 175, height - 175);
+
+	cpumeter = gtk_meter_new ("cpu");
+	gtk_widget_set_size_request (cpumeter, 150, 150);
+	gtk_fixed_put (GTK_FIXED (fixed), cpumeter, width - 175, 25);
+
+	memmeter = gtk_meter_new ("mem");
+	gtk_widget_set_size_request (memmeter, 150, 150);
+	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
 
 	tray = gtk_tray_new ();
 	gtk_fixed_put (GTK_FIXED (fixed), tray, 25, height - 100);

@@ -49,6 +49,8 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 	GtkClockPrivate *priv = GTK_CLOCK_GET_PRIVATE (clock);
 	struct tm *time = &priv->time;
 
+	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
+	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
 	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 	cairo_set_source_rgb (cr, 1, 1, 1);
 	cairo_fill_preserve (cr);
@@ -57,10 +59,15 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 
 	for (i = 0; i < 12; i++)
 	{
+		cairo_save (cr);
+
 		if (i % 3 == 0)
 			inset = 0.2 * radius;
-		else
+		else {
 			inset = 0.1 * radius;
+			cairo_set_line_width (cr,
+				0.5 * cairo_get_line_width (cr));
+		}
 
 		cairo_move_to (cr,
 				cx + (radius - inset) * cos (i * M_PI / 6),
@@ -69,6 +76,8 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 				cx + radius * cos (i * M_PI / 6),
 				cy + radius * sin (i * M_PI / 6));
 		cairo_stroke (cr);
+
+		cairo_restore (cr);
 	}
 
 	cairo_save (cr);
