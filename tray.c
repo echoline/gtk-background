@@ -1,4 +1,5 @@
 #include "tray.h"
+#include "bubble.h"
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 #define SYSTEM_TRAY_BEGIN_MESSAGE   1
@@ -8,7 +9,6 @@ typedef struct _GtkTrayPrivate GtkTrayPrivate;
 
 struct _GtkTrayPrivate
 {
-//	GHashTable *sockets;
 	Atom manager_atom;
 	Atom selection_atom;
 	Atom opcode_atom;
@@ -40,23 +40,19 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 		if (xev->message_type == priv->manager_atom &&
 		    xev->data.l[1] == priv->selection_atom)
 		{
-			printf ("do something!\n");
 			return GDK_FILTER_REMOVE;
 		}
 		else if (xev->message_type == priv->opcode_atom &&
 		    xev->data.l[1] == SYSTEM_TRAY_REQUEST_DOCK)
 		{
 			window = xev->data.l[2];
-//			if (g_hash_table_lookup (priv->sockets, GUINT_TO_POINTER (window)) != NULL)
-//				return GDK_FILTER_REMOVE;
 
 			socket = gtk_socket_new ();
 			gtk_container_add (GTK_CONTAINER (tray), socket);
-			gtk_widget_show (socket);
-			gtk_widget_set_size_request (socket, 32, 32);
+			gtk_widget_set_size_request (socket, 64, 64);
+			gtk_widget_show_all (socket);
 
 			gtk_socket_add_id (GTK_SOCKET (socket), window);
-//			g_hash_table_insert (priv->sockets, GUINT_TO_POINTER (window), socket);
 
 			return GDK_FILTER_REMOVE;
 		}
@@ -133,9 +129,6 @@ gtk_tray_class_init (GtkTrayClass *klass)
 static void
 gtk_tray_init (GtkTray *tray)
 {
-//	GtkTrayPrivate *priv = GTK_TRAY_GET_PRIVATE (tray);
-
-//	priv->sockets = g_hash_table_new (NULL, NULL);
 }
 
 GtkWidget*

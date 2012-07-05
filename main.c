@@ -5,6 +5,7 @@
 #include "tray.h"
 #include "meter.h"
 #include "info.h"
+#include "weather.h"
 
 int
 main (int argc, char **argv)
@@ -16,6 +17,7 @@ main (int argc, char **argv)
 	GtkWidget *cpumeter;
 	GtkWidget *memmeter;
 	GtkWidget *launcher;
+	GtkWidget *weather;
 	gint width;
 	gint height;
 
@@ -51,10 +53,10 @@ main (int argc, char **argv)
 
 	memmeter = mem_init ();
 	gtk_widget_set_size_request (memmeter, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 200);
+	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
 
 	tray = gtk_tray_new ();
-	gtk_fixed_put (GTK_FIXED (fixed), tray, 25, height - 100);
+	gtk_fixed_put (GTK_FIXED (fixed), tray, 25, height - 175);
 
 	gtk_widget_show_all (root);
 
