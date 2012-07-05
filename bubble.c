@@ -9,40 +9,58 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 	gint height = gtk_widget_get_allocated_height (bubble);
 	gdouble cx = width / 2.0;
 	gdouble cy = height / 2.0;
-	gdouble radius = MIN (width/2, height/2) - 5;
+	gdouble radius = MIN (75.0, MIN (cx, cy)) - 5;
 	cairo_pattern_t *pat;
-	GtkWidget *child = gtk_bin_get_child (GTK_BIN (bubble));
+
+	GTK_WIDGET_CLASS (gtk_bubble_parent_class)->draw (bubble, cr);
 
 	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
 	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
-	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
-	cairo_set_source_rgb (cr, 1, 1, 1);
-	cairo_fill_preserve (cr);
-	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_stroke (cr);
 
-	printf ("%d\n", gtk_widget_get_allocated_width (child));
+	cairo_new_path (cr);
 
-	if (child != NULL)
-	{
-		cairo_save (cr);
-		cairo_move_to (cr,
-			cx - gtk_widget_get_allocated_width (child) / 2,
-			cy - gtk_widget_get_allocated_height (child) / 2);
-		gtk_widget_draw (child, cr);
-		cairo_restore (cr);
-	}
+	cairo_arc (cr, MAX (cx, width-75.0), MAX (cy, height-75.0), radius, 0, M_PI / 2.0);
+	cairo_arc (cr, MIN (cx, 75.0), MAX (cy, height-75.0), radius, M_PI / 2.0, M_PI);
+	cairo_arc (cr, MIN (cx, 75.0), MIN (cy, 75.0), radius, M_PI, 3.0 * M_PI / 2.0);
+	cairo_arc (cr, MAX (cx, width-75.0), MIN (cy, 75.0), radius, 3.0 * M_PI / 2.0, 2.0 * M_PI);
+	cairo_close_path (cr);
 
-	pat = cairo_pattern_create_radial (cx, cy, radius,
-                                   0,  0, radius);
+	pat = cairo_pattern_create_radial (cx, cy, MAX (cx, cy),
+                                   0,  0, MAX (cx, cy));
 	cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0.4);
 	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.2);
 	cairo_set_source (cr, pat);
-	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
-	cairo_fill (cr);
+	cairo_fill_preserve (cr);
+
+	cairo_set_source_rgb (cr, 0, 0, 0);
+	cairo_stroke (cr);
+
 	cairo_pattern_destroy (pat);
 
-	return TRUE;
+	return FALSE;
+}
+
+static void
+gtk_bubble_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
+{
+	GtkWidget *child = gtk_bin_get_child (GTK_BIN (widget));
+	GtkAllocation child_allocation;
+
+	gtk_widget_set_allocation (widget, allocation);
+
+	if (child && gtk_widget_get_visible (child))
+	{
+		child_allocation.x = allocation->x + MIN (50.0,
+					allocation->width / 2.0);
+		child_allocation.y = allocation->y + MIN (50.0,
+					allocation->height / 2.0);
+		child_allocation.width = allocation->width - MIN (100.0,
+					allocation->width);
+		child_allocation.height = allocation->height - MIN (100.0,
+					allocation->height);
+
+		gtk_widget_size_allocate (child, &child_allocation);
+	}
 }
 
 static void
@@ -51,6 +69,7 @@ gtk_bubble_class_init (GtkBubbleClass *klass)
 	GtkWidgetClass *class = GTK_WIDGET_CLASS (klass);
 
 	class->draw = gtk_bubble_draw;
+	class->size_allocate = gtk_bubble_size_allocate;
 }
 
 static void

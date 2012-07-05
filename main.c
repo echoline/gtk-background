@@ -5,6 +5,7 @@
 #include "tray.h"
 #include "meter.h"
 #include "info.h"
+#include "bubble.h"
 
 int
 main (int argc, char **argv)
@@ -16,6 +17,7 @@ main (int argc, char **argv)
 	GtkWidget *cpumeter;
 	GtkWidget *memmeter;
 	GtkWidget *launcher;
+	GtkWidget *bubble;
 	gint width;
 	gint height;
 
@@ -37,9 +39,12 @@ main (int argc, char **argv)
 	fixed = gtk_fixed_new ();
 	gtk_container_add (GTK_CONTAINER (root), fixed);
 
+	bubble = gtk_bubble_new ();
+	gtk_widget_set_size_request (bubble, 555, 150);
 	launcher = launcher_new ();
 	gtk_widget_set_size_request (launcher, 480, -1);
-	gtk_fixed_put (GTK_FIXED (fixed), launcher, 25, 25);
+	gtk_container_add (GTK_CONTAINER (bubble), launcher);
+	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, 25);
 
 	clock = gtk_clock_new ();
 	gtk_widget_set_size_request (clock, 150, 150);
@@ -53,8 +58,12 @@ main (int argc, char **argv)
 	gtk_widget_set_size_request (memmeter, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
 
+	bubble = gtk_bubble_new ();
+	gtk_widget_set_size_request (bubble, 150, 150);
 	tray = gtk_tray_new ();
-	gtk_fixed_put (GTK_FIXED (fixed), tray, 25, height - 175);
+	gtk_widget_set_size_request (tray, -1, 32);
+	gtk_container_add (GTK_CONTAINER (bubble), tray);
+	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, height - 175);
 
 	gtk_widget_show_all (root);
 

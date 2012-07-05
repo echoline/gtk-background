@@ -48,14 +48,16 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 		{
 			window = xev->data.l[2];
 
-			bubble = gtk_bubble_new ();
 			socket = gtk_socket_new ();
-			gtk_widget_set_size_request (bubble, 150, 150);
-			gtk_widget_set_size_request (socket, 64, 64);
-			gtk_container_add (GTK_CONTAINER (tray), bubble);
-			gtk_container_add (GTK_CONTAINER (bubble), socket);
-			gtk_widget_show (socket);
-			gtk_widget_show (bubble);
+			gtk_container_add (GTK_CONTAINER (tray), socket);
+			gtk_widget_set_size_request (socket, 32, 32);
+			gtk_widget_show_all (socket);
+
+//			bubble = gtk_bubble_new ();
+//			gtk_container_add (GTK_CONTAINER (tray), bubble);
+//			gtk_container_add (GTK_CONTAINER (bubble), socket);
+//			gtk_widget_set_size_request (bubble, 150, 150);
+//			gtk_widget_show_all (bubble);
 
 			gtk_socket_add_id (GTK_SOCKET (socket), window);
 
