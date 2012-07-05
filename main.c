@@ -5,7 +5,6 @@
 #include "tray.h"
 #include "meter.h"
 #include "info.h"
-#include "weather.h"
 
 int
 main (int argc, char **argv)
@@ -17,7 +16,6 @@ main (int argc, char **argv)
 	GtkWidget *cpumeter;
 	GtkWidget *memmeter;
 	GtkWidget *launcher;
-	GtkWidget *weather;
 	gint width;
 	gint height;
 

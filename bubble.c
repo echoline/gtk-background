@@ -21,7 +21,10 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_stroke (cr);
 
-	if (child != NULL) {
+	printf ("%d\n", gtk_widget_get_allocated_width (child));
+
+	if (child != NULL)
+	{
 		cairo_save (cr);
 		cairo_move_to (cr,
 			cx - gtk_widget_get_allocated_width (child) / 2,
@@ -43,22 +46,11 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 }
 
 static void
-gtk_bubble_size_allocate (GtkWidget *bubble, GtkAllocation *allocation)
-{
-	GtkWidget *child = gtk_bin_get_child (GTK_BIN (bubble));
-
-	gtk_widget_set_allocation (bubble, allocation);
-
-	gtk_widget_set_allocation (child, allocation);
-}
-
-static void
 gtk_bubble_class_init (GtkBubbleClass *klass)
 {
 	GtkWidgetClass *class = GTK_WIDGET_CLASS (klass);
 
 	class->draw = gtk_bubble_draw;
-	class->size_allocate = gtk_bubble_size_allocate;
 }
 
 static void
