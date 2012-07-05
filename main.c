@@ -40,9 +40,8 @@ main (int argc, char **argv)
 	gtk_container_add (GTK_CONTAINER (root), fixed);
 
 	bubble = gtk_bubble_new ();
-	gtk_widget_set_size_request (bubble, 555, 150);
+	gtk_widget_set_size_request (bubble, width / 2, 150);
 	launcher = launcher_new ();
-	gtk_widget_set_size_request (launcher, 480, -1);
 	gtk_container_add (GTK_CONTAINER (bubble), launcher);
 	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, 25);
 
@@ -59,7 +58,7 @@ main (int argc, char **argv)
 	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
 
 	bubble = gtk_bubble_new ();
-	gtk_widget_set_size_request (bubble, 150, 150);
+	gtk_widget_set_size_request (bubble, width/2, 150);
 	tray = gtk_tray_new ();
 	gtk_widget_set_size_request (tray, -1, 32);
 	gtk_container_add (GTK_CONTAINER (bubble), tray);
