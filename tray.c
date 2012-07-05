@@ -1,5 +1,4 @@
 #include "tray.h"
-#include "bubble.h"
 
 #define SYSTEM_TRAY_REQUEST_DOCK    0
 #define SYSTEM_TRAY_BEGIN_MESSAGE   1
@@ -26,7 +25,6 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 	GtkTrayPrivate *priv = GTK_TRAY_GET_PRIVATE (tray);
 	XClientMessageEvent *xev;
 	GtkWidget *socket;
-	GtkWidget *bubble;
 	Window window;
 
 	switch (((XEvent*)xevent)->type) {
@@ -50,14 +48,8 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 
 			socket = gtk_socket_new ();
 			gtk_container_add (GTK_CONTAINER (tray), socket);
-			gtk_widget_set_size_request (socket, 32, 32);
+			gtk_widget_set_size_request (socket, 22, 22);
 			gtk_widget_show_all (socket);
-
-//			bubble = gtk_bubble_new ();
-//			gtk_container_add (GTK_CONTAINER (tray), bubble);
-//			gtk_container_add (GTK_CONTAINER (bubble), socket);
-//			gtk_widget_set_size_request (bubble, 150, 150);
-//			gtk_widget_show_all (bubble);
 
 			gtk_socket_add_id (GTK_SOCKET (socket), window);
 

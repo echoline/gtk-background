@@ -52,6 +52,7 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 
 	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
 	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
+
 	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 	cairo_set_source_rgb (cr, 1, 1, 1);
 	cairo_fill_preserve (cr);
