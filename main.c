@@ -5,6 +5,8 @@
 #include "tray.h"
 #include "meter.h"
 #include "info.h"
+#include "bubble.h"
+#include "weather/weather-widget.h"
 
 int
 main (int argc, char **argv)
@@ -16,6 +18,8 @@ main (int argc, char **argv)
 	GtkWidget *cpumeter;
 	GtkWidget *memmeter;
 	GtkWidget *launcher;
+	GtkWidget *weather;
+	GtkWidget *bubble;
 	gint width;
 	gint height;
 
@@ -55,6 +59,12 @@ main (int argc, char **argv)
 	clock = gtk_clock_new ();
 	gtk_widget_set_size_request (clock, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), clock, width - 175, height - 175);
+
+	weather = gtk_weather_new ();
+	bubble = gtk_bubble_new ();
+	gtk_container_add (GTK_CONTAINER (bubble), weather);
+	gtk_widget_set_size_request (bubble, 150, 150);
+	gtk_fixed_put (GTK_FIXED (fixed), bubble, width - 325, height - 175);
 
 	gtk_widget_show_all (root);
 

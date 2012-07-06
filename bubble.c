@@ -50,16 +50,16 @@ gtk_bubble_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
 
 	if (child && gtk_widget_get_visible (child))
 	{
-		child_allocation.x = allocation->x + MIN (75.0,
+		child_allocation.x = allocation->x + MIN (50.0,
 					allocation->width / 2.0);
 		child_allocation.y = allocation->y + MIN (50.0,
 					allocation->height / 2.0);
 		child_allocation.width = allocation->width - MIN (150.0,
 					allocation->width);
-		child_allocation.height = allocation->height - MIN (100.0,
+		child_allocation.height = allocation->height - MIN (150.0,
 					allocation->height);
 
-		gtk_widget_size_allocate (child, &child_allocation);
+		gtk_widget_size_allocate (child, allocation);
 	}
 }
 
