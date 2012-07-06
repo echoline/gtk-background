@@ -54,7 +54,7 @@ main (int argc, char **argv)
 	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
 
 	tray = gtk_tray_new ();
-	gtk_fixed_put (GTK_FIXED (fixed), tray, 25, height - 75);
+	gtk_fixed_put (GTK_FIXED (fixed), tray, width / 2 + 30, 25);
 
 	clock = gtk_clock_new ();
 	gtk_widget_set_size_request (clock, 150, 150);
