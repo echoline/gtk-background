@@ -28,9 +28,18 @@ gtk_weather_update (gpointer data)
 }
 
 static void
+gtk_weather_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
+{
+	GTK_WIDGET_CLASS (gtk_weather_parent_class)->size_allocate (widget,
+                                allocation);
+}
+
+static void
 gtk_weather_class_init (GtkWeatherClass *klass)
 {
 	GtkWidgetClass *class = GTK_WIDGET_CLASS (klass);
+
+	class->size_allocate = gtk_weather_size_allocate;
 
 	g_type_class_add_private (class, sizeof (GtkWeatherPrivate));
 }
@@ -41,15 +50,22 @@ gtk_weather_updated (gpointer data, gpointer user_data)
 	GWeatherInfo *info = GWEATHER_INFO (data);
 	GtkWeather *weather = GTK_WEATHER (user_data);
 	GtkWeatherPrivate *priv = GTK_WEATHER_GET_PRIVATE (weather);
+	GdkRGBA color;
+
+	gdk_rgba_parse (&color, "black");
 
 	const gchar *icon_name = gweather_info_get_icon_name (info);
 
 	gtk_label_set_text (GTK_LABEL (priv->temp),
 				gweather_info_get_temp (info));
+	gtk_widget_override_color (priv->temp, GTK_STATE_FLAG_NORMAL,
+				&color);
 	gtk_image_set_from_icon_name (GTK_IMAGE (priv->icon), icon_name,
 					 GTK_ICON_SIZE_DIALOG);
 	gtk_label_set_text (GTK_LABEL (priv->wind),
 				gweather_info_get_wind (info));
+	gtk_widget_override_color (priv->wind, GTK_STATE_FLAG_NORMAL,
+				&color);
 }
 
 static void
@@ -77,10 +93,6 @@ gtk_weather_new (void)
 	priv->temp = gtk_label_new ("");
 	priv->icon = gtk_image_new ();
 	priv->wind = gtk_label_new ("");
-
-	// lame spacing
-	gtk_container_add (GTK_CONTAINER (ret), gtk_label_new(""));
-	gtk_container_add (GTK_CONTAINER (ret), gtk_label_new(""));
 
 	gtk_container_add (GTK_CONTAINER (ret), priv->temp);
 	gtk_container_add (GTK_CONTAINER (ret), priv->icon);

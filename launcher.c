@@ -76,7 +76,7 @@ activate_cb (GtkEntry *entry, gpointer data)
 
 	if (!list_check (GTK_TREE_MODEL (store), text))
 	{
-		gtk_list_store_append (store, &iter);
+		gtk_list_store_prepend (store, &iter);
 		gtk_list_store_set (store, &iter, 0, text, -1);
 		list_save (GTK_TREE_MODEL (store));
 	}
@@ -123,7 +123,7 @@ text_changed_cb (GtkEntry *entry, GParamSpec *pspec, gpointer data)
 }
 
 GtkWidget*
-launcher_new ()
+launcher_init ()
 {
 	GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
 	GtkEntryCompletion *completion;

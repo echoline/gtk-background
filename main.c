@@ -1,8 +1,8 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
-#include "clock.h"
-#include "launcher.h"
 #include "tray.h"
+#include "launcher.h"
+#include "clock.h"
 #include "meter.h"
 #include "info.h"
 #include "bubble.h"
@@ -13,12 +13,8 @@ main (int argc, char **argv)
 {
 	GtkWidget *root;
 	GtkWidget *fixed;
-	GtkWidget *clock;
-	GtkWidget *tray;
-	GtkWidget *cpumeter;
-	GtkWidget *memmeter;
-	GtkWidget *launcher;
-	GtkWidget *weather;
+	GtkWidget *box;
+	GtkWidget *widget;
 	GtkWidget *bubble;
 	gint width;
 	gint height;
@@ -41,28 +37,34 @@ main (int argc, char **argv)
 	fixed = gtk_fixed_new ();
 	gtk_container_add (GTK_CONTAINER (root), fixed);
 
-	launcher = launcher_new ();
-	gtk_widget_set_size_request (launcher, width / 2, -1);
-	gtk_fixed_put (GTK_FIXED (fixed), launcher, 25, 25);
-
-	cpumeter = cpu_init ();
-	gtk_widget_set_size_request (cpumeter, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), cpumeter, width - 175, 25);
-
-	memmeter = mem_init ();
-	gtk_widget_set_size_request (memmeter, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), memmeter, width - 175, 175);
-
-	tray = gtk_tray_new ();
-	gtk_fixed_put (GTK_FIXED (fixed), tray, width / 2 + 30, 25);
-
-	clock = gtk_clock_new ();
-	gtk_widget_set_size_request (clock, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), clock, width - 175, height - 175);
-
-	weather = gtk_weather_new ();
 	bubble = gtk_bubble_new ();
-	gtk_container_add (GTK_CONTAINER (bubble), weather);
+	gtk_widget_set_size_request (bubble, width - 50, 150);
+	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
+	gtk_container_add (GTK_CONTAINER (bubble), box);
+	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, 25);
+
+	widget = launcher_init ();
+	gtk_widget_set_size_request (widget, width / 3, -1);
+	gtk_container_add (GTK_CONTAINER (box), widget);
+
+	widget = gtk_tray_new ();
+	gtk_container_add (GTK_CONTAINER (box), widget);
+
+	widget = cpu_init ();
+	gtk_widget_set_size_request (widget, 150, 150);
+	gtk_fixed_put (GTK_FIXED (fixed), widget, 25, height - 175);
+
+	widget = mem_init ();
+	gtk_widget_set_size_request (widget, 150, 150);
+	gtk_fixed_put (GTK_FIXED (fixed), widget, 175, height - 175);
+
+	widget = gtk_clock_new ();
+	gtk_widget_set_size_request (widget, 150, 150);
+	gtk_fixed_put (GTK_FIXED (fixed), widget, width - 175, height - 175);
+
+	widget = gtk_weather_new ();
+	bubble = gtk_bubble_new ();
+	gtk_container_add (GTK_CONTAINER (bubble), widget);
 	gtk_widget_set_size_request (bubble, 150, 150);
 	gtk_fixed_put (GTK_FIXED (fixed), bubble, width - 325, height - 175);
 

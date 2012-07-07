@@ -1,4 +1,5 @@
 #include "clock.h"
+#include "utils.h"
 
 typedef struct _GtkClockPrivate GtkClockPrivate;
 
@@ -82,15 +83,12 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 		cairo_restore (cr);
 	}
 
-	cairo_save (cr);
-	cairo_set_line_width (cr, 2.5 * cairo_get_line_width (cr));
 	cairo_move_to (cr, cx, cy);
 	cairo_line_to (cr, cx + radius / 2 * sin (M_PI / 6 * time->tm_hour +
 						M_PI / 360 * time->tm_min),
 			cy + radius / 2 * -cos (M_PI / 6 * time->tm_hour +
 						M_PI / 360 * time->tm_min));
 	cairo_stroke (cr);
-	cairo_restore (cr);
 
 	cairo_move_to (cr, cx, cy);
 	cairo_line_to (cr, cx + radius * 0.75 * sin (M_PI / 30 * time->tm_min),
@@ -103,12 +101,13 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 			cy + radius * 0.75 * -cos (M_PI / 30 * time->tm_sec));
 	cairo_stroke (cr);
 
+	cairo_arc (cr, cx, cy, radius, 0.0, 2.0 * M_PI);
+
 	pat = cairo_pattern_create_radial (cx, cy, radius,
                                    0,  0, radius);
 	cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0.4);
 	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.2);
 	cairo_set_source (cr, pat);
-	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 	cairo_fill (cr);
 	cairo_pattern_destroy (pat);
 

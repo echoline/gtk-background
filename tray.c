@@ -115,12 +115,21 @@ gtk_tray_realize (GtkWidget *widget)
 	}
 }
 
+static gboolean
+gtk_tray_draw (GtkWidget *widget, cairo_t *cr)
+{
+	GTK_WIDGET_CLASS (gtk_tray_parent_class)->draw (widget, cr);
+
+	return TRUE;
+}
+
 static void
 gtk_tray_class_init (GtkTrayClass *klass)
 {
 	GtkWidgetClass *class = GTK_WIDGET_CLASS (klass);
 
 	class->realize = gtk_tray_realize;
+	class->draw = gtk_tray_draw;
 
 	g_type_class_add_private (class, sizeof (GtkTrayPrivate));
 }

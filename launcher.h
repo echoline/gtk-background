@@ -3,6 +3,6 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget* launcher_new ();
+GtkWidget* launcher_init ();
 
 #endif // __LAUNCHER_H
