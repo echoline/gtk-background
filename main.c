@@ -37,11 +37,12 @@ main (int argc, char **argv)
 	fixed = gtk_fixed_new ();
 	gtk_container_add (GTK_CONTAINER (root), fixed);
 
-	bubble = gtk_bubble_new ();
-	gtk_widget_set_size_request (bubble, width - 50, 150);
+//	bubble = gtk_bubble_new ();
+//	gtk_widget_set_size_request (bubble, width - 50, 150);
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
-	gtk_container_add (GTK_CONTAINER (bubble), box);
-	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, 25);
+//	gtk_container_add (GTK_CONTAINER (bubble), box);
+//	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, 25);
+	gtk_fixed_put (GTK_FIXED (fixed), box, 25, 25);
 
 	widget = launcher_init ();
 	gtk_widget_set_size_request (widget, width / 3, -1);
