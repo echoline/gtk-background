@@ -54,6 +54,9 @@ gtk_weather_updated (gpointer data, gpointer user_data)
 
 	gdk_rgba_parse (&color, "black");
 
+	calc_sun (info);
+	calc_moon (info);
+
 	const gchar *icon_name = gweather_info_get_icon_name (info);
 
 	gtk_label_set_text (GTK_LABEL (priv->temp),
@@ -75,7 +78,10 @@ gtk_weather_init (GtkWeather *weather)
 	priv->info = g_object_new (GWEATHER_TYPE_INFO, NULL);
 	priv->info->priv->location = _weather_location_new (
 				"La Grande, OR", "KLGD",
-				NULL, NULL, FALSE, -1.0, -1.0, NULL, NULL);
+				NULL, NULL, TRUE,
+				DEGREES_TO_RADIANS (45.3247),
+				DEGREES_TO_RADIANS (-118.0867),
+				NULL, NULL);
 
 	gtk_weather_update (weather);
 

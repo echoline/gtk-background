@@ -14,9 +14,6 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 	gdouble radius = MIN (75.0, MIN (cx, cy)) - 5;
 	cairo_pattern_t *pat;
 
-	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
-	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
-
 	cairo_arc (cr, MAX (cx, width-75.0), MAX (cy, height-75.0), radius, 0, M_PI / 2.0);
 	cairo_arc (cr, MIN (cx, 75.0), MAX (cy, height-75.0), radius, M_PI / 2.0, M_PI);
 	cairo_arc (cr, MIN (cx, 75.0), MIN (cy, 75.0), radius, M_PI, 3.0 * M_PI / 2.0);

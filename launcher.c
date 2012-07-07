@@ -47,19 +47,18 @@ list_load(GtkListStore *store)
 }
 
 static gboolean
-list_check (GtkTreeModel *store, const gchar *text)
+list_check (GtkTreeModel *store, const gchar *text, GtkTreeIter *iter)
 {
 	gchar *tmp;
-	GtkTreeIter iter;
 
-	if (gtk_tree_model_get_iter_first(store, &iter)) do {
-		gtk_tree_model_get (store, &iter, 0, &tmp, -1);
+	if (gtk_tree_model_get_iter_first(store, iter)) do {
+		gtk_tree_model_get (store, iter, 0, &tmp, -1);
 		if (!g_ascii_strcasecmp(tmp, text)) {
 			g_free (tmp);
 			return TRUE;
 		}
 		g_free (tmp);
-	} while (gtk_tree_model_iter_next (store, &iter));
+	} while (gtk_tree_model_iter_next (store, iter));
 
 	return FALSE;
 }
@@ -74,12 +73,14 @@ activate_cb (GtkEntry *entry, gpointer data)
 	GtkListStore *store = GTK_LIST_STORE (data);
 	GtkTreeIter iter;
 
-	if (!list_check (GTK_TREE_MODEL (store), text))
+	if (list_check (GTK_TREE_MODEL (store), text, &iter))
 	{
-		gtk_list_store_prepend (store, &iter);
-		gtk_list_store_set (store, &iter, 0, text, -1);
-		list_save (GTK_TREE_MODEL (store));
+		gtk_list_store_remove (store, &iter);
 	}
+
+	gtk_list_store_prepend (store, &iter);
+	gtk_list_store_set (store, &iter, 0, text, -1);
+	list_save (GTK_TREE_MODEL (store));
 
 	if (!g_shell_parse_argv(text, &argc, &argv, NULL) ||
 		!g_spawn_async_with_pipes(NULL, argv, NULL,
