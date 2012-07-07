@@ -53,11 +53,11 @@ main (int argc, char **argv)
 
 	widget = cpu_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), widget, 25, height - 175);
+	gtk_fixed_put (GTK_FIXED (fixed), widget, width - 175, 25);
 
 	widget = mem_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), widget, 175, height - 175);
+	gtk_fixed_put (GTK_FIXED (fixed), widget, width - 175, 175);
 
 	widget = gtk_clock_new ();
 	gtk_widget_set_size_request (widget, 150, 150);
