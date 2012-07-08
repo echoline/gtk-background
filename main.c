@@ -7,6 +7,7 @@
 #include "info.h"
 #include "bubble.h"
 #include "weather/weather-widget.h"
+#include "drag.h"
 
 int
 main (int argc, char **argv)
@@ -16,6 +17,7 @@ main (int argc, char **argv)
 	GtkWidget *box;
 	GtkWidget *widget;
 	GtkWidget *bubble;
+	GtkWidget *drag;
 	gint width;
 	gint height;
 
@@ -51,23 +53,31 @@ main (int argc, char **argv)
 	widget = gtk_tray_new ();
 	gtk_container_add (GTK_CONTAINER (box), widget);
 
+	drag = gtk_drag_new ();
 	widget = cpu_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), widget, width - 175, 25);
+	gtk_container_add (GTK_CONTAINER (drag), widget);
+	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 175, 25);
 
+	drag = gtk_drag_new ();
 	widget = mem_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), widget, width - 175, 175);
+	gtk_container_add (GTK_CONTAINER (drag), widget);
+	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 175, 175);
 
+	drag = gtk_drag_new ();
 	widget = gtk_clock_new ();
 	gtk_widget_set_size_request (widget, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), widget, width - 175, height - 175);
+	gtk_container_add (GTK_CONTAINER (drag), widget);
+	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 175, height - 175);
 
+	drag = gtk_drag_new ();
 	widget = gtk_weather_new ();
 	bubble = gtk_bubble_new ();
 	gtk_container_add (GTK_CONTAINER (bubble), widget);
 	gtk_widget_set_size_request (bubble, 150, 150);
-	gtk_fixed_put (GTK_FIXED (fixed), bubble, width - 325, height - 175);
+	gtk_container_add (GTK_CONTAINER (drag), bubble);
+	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 325, height - 175);
 
 	gtk_widget_show_all (root);
 

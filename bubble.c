@@ -1,5 +1,4 @@
 #include "bubble.h"
-#include "utils.h"
 
 G_DEFINE_TYPE (GtkBubble, gtk_bubble, GTK_TYPE_BIN);
 

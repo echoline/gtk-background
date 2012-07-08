@@ -1,5 +1,4 @@
 #include "clock.h"
-#include "utils.h"
 
 typedef struct _GtkClockPrivate GtkClockPrivate;
 
