@@ -26,8 +26,6 @@ gtk_drag_move (GtkDrag *drag, GdkEventMotion *event, gpointer user_data)
 			(int)(event->x_root - priv->x),
 			(int)(event->y_root - priv->y));
 	}
-
-	return TRUE;
 }
 
 static void
@@ -37,8 +35,6 @@ gtk_drag_clicked (GtkDrag *drag, GdkEventButton *event, gpointer user_data)
 	priv->clicked = TRUE;
 	priv->x = event->x;
 	priv->y = event->y;
-
-	return TRUE;
 }
 
 static void
@@ -46,8 +42,6 @@ gtk_drag_unclicked (GtkDrag *drag, GdkEvent *event, gpointer user_data)
 {
 	GtkDragPrivate *priv = GTK_DRAG_GET_PRIVATE (drag);
 	priv->clicked = FALSE;
-
-	return TRUE;
 }
 
 static void

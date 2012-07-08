@@ -78,17 +78,16 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_pattern_destroy (pat);
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_arc (cr, cx, cy, radius, 0.25 * M_PI, 0.75 * M_PI);
+	cairo_arc (cr, cx, cy, radius, 0.1 * M_PI, 0.9 * M_PI);
 
-	cairo_curve_to (cr, cx, cy + radius * cos (0.25 * M_PI),
-			cx - 0.75 * radius * sin (0.25 * M_PI), cy + radius/4,
+	cairo_curve_to (cr, cx, cy + radius/2,
+			cx - radius/2, cy + radius/4,
 			cx, cy + radius/4);
 
-	cairo_curve_to (cr, cx - 0.75 * radius * sin (1.75 * M_PI),
-			cy + radius/4,
-			cx, cy + radius * cos (1.75 * M_PI),
-			cx - radius * sin (1.75 * M_PI),
-			cy + radius * cos (1.75 * M_PI));
+	cairo_curve_to (cr, cx + radius/2, cy + radius/4,
+			cx, cy + radius/2,
+			cx + radius * cos (0.1 * M_PI),
+			cy + radius * sin (0.1 * M_PI));
 
 	cairo_close_path (cr);
 
