@@ -56,16 +56,16 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	for (inc = -0.25; inc <= 0.25; inc += 0.05)
 	{
 		cairo_move_to (cr, cx + radius * 1.2 * sin (inc * M_PI),
-				ny + radius * 1.2 * -cos (inc * M_PI));
+				ny - radius * 1.2 * cos (inc * M_PI));
 		cairo_line_to (cr, cx + radius * 1.25 * sin (inc * M_PI),
-				ny + radius * 1.25 * -cos (inc * M_PI));
+				ny - radius * 1.25 * cos (inc * M_PI));
 		cairo_stroke (cr);
 	}
 
 	cairo_set_source_rgb (cr, 1, 0, 0);
 	cairo_move_to (cr, cx, ny);
 	cairo_line_to (cr, cx + radius * sin (theta),
-			ny + radius * -cos (theta));
+			ny - radius * cos (theta));
 	cairo_stroke (cr);
 
 	pat = cairo_pattern_create_radial (cx, cy, radius,
@@ -78,7 +78,20 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_pattern_destroy (pat);
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_arc (cr, cx, cy, radius, 0.1 * M_PI, 0.9 * M_PI);
+	cairo_arc (cr, cx, cy, radius, 0.25 * M_PI, 0.75 * M_PI);
+
+	cairo_curve_to (cr, cx, cy + radius * cos (0.25 * M_PI),
+			cx - 0.75 * radius * sin (0.25 * M_PI), cy + radius/4,
+			cx, cy + radius/4);
+
+	cairo_curve_to (cr, cx - 0.75 * radius * sin (1.75 * M_PI),
+			cy + radius/4,
+			cx, cy + radius * cos (1.75 * M_PI),
+			cx - radius * sin (1.75 * M_PI),
+			cy + radius * cos (1.75 * M_PI));
+
+	cairo_close_path (cr);
+
 	cairo_fill (cr);
 
 	cairo_set_source_rgb (cr, 1, 1, 1);

@@ -57,9 +57,6 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_stroke (cr);
 
-	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
-	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
-
 	for (i = 0; i < 12; i++)
 	{
 		cairo_save (cr);
@@ -82,6 +79,9 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 
 		cairo_restore (cr);
 	}
+
+	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
+	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
 
 	cairo_move_to (cr, cx, cy);
 	cairo_line_to (cr, cx + radius / 2 * sin (M_PI / 6 * time->tm_hour +
