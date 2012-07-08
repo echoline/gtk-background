@@ -15,10 +15,12 @@ static void
 gtk_clock_redraw_canvas (GtkClock *clock)
 {
 	GtkWidget *widget = GTK_WIDGET (clock);
+	GtkAllocation allocation;
 
-	gtk_widget_queue_draw_area (widget, 0, 0,
-				gtk_widget_get_allocated_width (widget),
-				gtk_widget_get_allocated_height (widget));
+	gtk_widget_get_allocation (widget, &allocation);
+
+	gtk_widget_queue_draw_area (widget, allocation.x, allocation.y,
+				allocation.width, allocation.height);
 }
 
 static gboolean
