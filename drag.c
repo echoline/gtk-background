@@ -32,9 +32,16 @@ static void
 gtk_drag_clicked (GtkDrag *drag, GdkEventButton *event, gpointer user_data)
 {
 	GtkDragPrivate *priv = GTK_DRAG_GET_PRIVATE (drag);
+	GtkFixed *parent = GTK_FIXED (gtk_widget_get_parent (
+					GTK_WIDGET (drag)));
+
 	priv->clicked = TRUE;
 	priv->x = event->x;
 	priv->y = event->y;
+
+	gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (drag));
+	gtk_fixed_put (parent, GTK_WIDGET (drag), event->x_root - event->x,
+						event->y_root - event->y);
 }
 
 static void
@@ -55,6 +62,8 @@ gtk_drag_class_init (GtkDragClass *klass)
 static void
 gtk_drag_init (GtkDrag *drag)
 {
+	gtk_widget_set_has_window (GTK_WIDGET (drag), FALSE);
+
 	g_signal_connect (drag, "button_press_event",
 			G_CALLBACK (gtk_drag_clicked), NULL);
 	g_signal_connect (drag, "button_release_event",

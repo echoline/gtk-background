@@ -118,9 +118,12 @@ static void
 gtk_meter_init (GtkMeter *meter)
 {
 	GtkMeterPrivate *priv = GTK_METER_GET_PRIVATE (meter);
+
 	priv->low = 0.0;
 	priv->high = 1.0;
 	priv->value = 0.5;
+
+	gtk_widget_set_has_window (GTK_WIDGET (meter), FALSE);
 }
 
 GtkWidget*

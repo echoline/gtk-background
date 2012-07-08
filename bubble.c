@@ -87,6 +87,7 @@ gtk_bubble_class_init (GtkBubbleClass *klass)
 static void
 gtk_bubble_init (GtkBubble *bubble)
 {
+	gtk_widget_set_has_window (GTK_WIDGET (bubble), FALSE);
 }
 
 GtkWidget*

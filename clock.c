@@ -126,6 +126,8 @@ gtk_clock_class_init (GtkClockClass *klass)
 static void
 gtk_clock_init (GtkClock *clock)
 {
+	gtk_widget_set_has_window (GTK_WIDGET (clock), FALSE);
+
 	gtk_clock_update (clock);
 
 	g_timeout_add (1000, gtk_clock_update, clock);
