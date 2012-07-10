@@ -1,6 +1,6 @@
 #include "launcher.h"
 #include "sensor.h"
-#include "drag.h"
+//#include "drag.h"
 #include "bubble.h"
 #include <vte/vte.h>
 
@@ -94,15 +94,15 @@ activate_cb (GtkEntry *entry, gpointer data)
 	GtkListStore *store = GTK_LIST_STORE (data);
 	GtkTreeIter iter;
 	gint input, output;
-	GIOChannel *channel;
-	GSource *source;
-	GtkWidget *drag;
-	GtkWidget *bubble;
-	GtkWidget *term;
-	GtkWidget *bg;
-	GdkRGBA fgcol = {0, 0, 0, 1};
-	GdkRGBA bgcol = {1, 1, 1, 1};
-	VtePty *pty;
+//	GIOChannel *channel;
+//	GSource *source;
+//	GtkWidget *drag;
+//	GtkWidget *bubble;
+//	GtkWidget *term;
+//	GtkWidget *bg;
+//	GdkRGBA fgcol = {0, 0, 0, 1};
+//	GdkRGBA bgcol = {1, 1, 1, 1};
+//	VtePty *pty;
 
 	if (list_check (GTK_TREE_MODEL (store), text, &iter))
 	{

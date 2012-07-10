@@ -46,8 +46,8 @@ sensor_timeout_cb (gpointer data)
 						&priv->heading, &priv->pitch,
 						&priv->roll) == 3)
 				{
-					printf ("%lf %lf %lf\n", priv->heading,
-						priv->pitch, priv->roll);
+//					printf ("%lf %lf %lf\n", priv->heading,
+//						priv->pitch, priv->roll);
 					g_signal_emit (sensor,
 						sensor_signals[SIGNAL_UPDATED],
 						0);
