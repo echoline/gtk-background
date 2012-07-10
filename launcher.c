@@ -1,4 +1,8 @@
 #include "launcher.h"
+#include "sensor.h"
+#include "drag.h"
+#include "bubble.h"
+#include <vte/vte.h>
 
 static void
 list_save(GtkTreeModel *store)
@@ -63,6 +67,23 @@ list_check (GtkTreeModel *store, const gchar *text, GtkTreeIter *iter)
 	return FALSE;
 }
 
+static gboolean
+watch_cb (GIOChannel *channel, GIOCondition condition, gpointer user_data)
+{
+	VteTerminal *term = VTE_TERMINAL (user_data);
+	gint outfd = g_io_channel_unix_get_fd (channel);
+	gint ptyfd = vte_pty_get_fd (vte_terminal_get_pty_object (term));
+	char c;
+
+	while (read (outfd, &c, 1) == 1)
+		write (ptyfd, &c, 1);
+
+	if (condition & G_IO_HUP)
+		return FALSE;
+
+	return TRUE;
+}
+
 static void
 activate_cb (GtkEntry *entry, gpointer data)
 {
@@ -72,6 +93,16 @@ activate_cb (GtkEntry *entry, gpointer data)
 	gchar *command;
 	GtkListStore *store = GTK_LIST_STORE (data);
 	GtkTreeIter iter;
+	gint input, output;
+	GIOChannel *channel;
+	GSource *source;
+	GtkWidget *drag;
+	GtkWidget *bubble;
+	GtkWidget *term;
+	GtkWidget *bg;
+	GdkRGBA fgcol = {0, 0, 0, 1};
+	GdkRGBA bgcol = {1, 1, 1, 1};
+	VtePty *pty;
 
 	if (list_check (GTK_TREE_MODEL (store), text, &iter))
 	{
@@ -86,8 +117,8 @@ activate_cb (GtkEntry *entry, gpointer data)
 		!g_spawn_async_with_pipes(NULL, argv, NULL,
 					G_SPAWN_SEARCH_PATH |
 					G_SPAWN_STDERR_TO_DEV_NULL,
-					NULL, NULL, NULL, NULL,
-					NULL, NULL, NULL))
+					NULL, NULL, NULL,
+					&input, &output, NULL, NULL))
 	{
 		command = g_strconcat ("xdg-open ", text, NULL);
 
@@ -99,6 +130,30 @@ activate_cb (GtkEntry *entry, gpointer data)
 					NULL, NULL, NULL);
 
 		g_free(command);
+	} else if (output) {
+/*		term = vte_terminal_new ();
+		pty = vte_pty_new (VTE_PTY_DEFAULT, NULL);
+		vte_terminal_set_pty_object (VTE_TERMINAL (term), pty);
+		gtk_widget_set_has_window (term, FALSE);
+
+		channel = g_io_channel_unix_new (output);
+
+		drag = gtk_drag_new ();
+		bubble = gtk_bubble_new ();
+		bg = gtk_widget_get_toplevel (GTK_WIDGET (entry));
+		bg = gtk_bin_get_child (GTK_BIN (bg));
+		vte_terminal_set_colors_rgba (VTE_TERMINAL (term),
+						&fgcol, &bgcol, NULL, 0);
+		gtk_container_add (GTK_CONTAINER (drag), bubble);
+		gtk_container_add (GTK_CONTAINER (bubble), term);
+		gtk_fixed_put (GTK_FIXED (bg), drag, 25, 100);
+		gtk_widget_set_size_request (bubble, 640, 320);
+		gtk_widget_show_all (drag);
+
+		if (!g_io_add_watch (channel, G_IO_OUT|G_IO_HUP, watch_cb,
+					term)) {
+			g_error ("g_io_add_watch");
+		}*/
 	}
 
 	gtk_entry_set_text (entry, "");

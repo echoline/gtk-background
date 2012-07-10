@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
+#include "sensor.h"
 #include "tray.h"
 #include "launcher.h"
 #include "clock.h"
@@ -18,10 +19,13 @@ main (int argc, char **argv)
 	GtkWidget *widget;
 	GtkWidget *bubble;
 	GtkWidget *drag;
+	Sensor *sensor;
 	gint width;
 	gint height;
 
 	gtk_init (&argc, &argv);
+
+	sensor = (Sensor*)sensor_new ();
 
 	width = gdk_screen_width ();
 	height = gdk_screen_height ();
@@ -53,31 +57,35 @@ main (int argc, char **argv)
 	widget = gtk_tray_new ();
 	gtk_container_add (GTK_CONTAINER (box), widget);
 
-	drag = gtk_drag_new ();
+	drag = gtk_drag_new (sensor);
 	widget = cpu_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), widget);
-	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 175, 25);
+	gtk_container_add (GTK_CONTAINER (fixed), drag);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 175, 25);
 
-	drag = gtk_drag_new ();
+	drag = gtk_drag_new (sensor);
 	widget = mem_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), widget);
-	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 175, 175);
+	gtk_container_add (GTK_CONTAINER (fixed), drag);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 175, 175);
 
-	drag = gtk_drag_new ();
+	drag = gtk_drag_new (sensor);
 	widget = gtk_clock_new ();
 	gtk_widget_set_size_request (widget, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), widget);
-	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 175, height - 175);
+	gtk_container_add (GTK_CONTAINER (fixed), drag);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 175, height - 175);
 
-	drag = gtk_drag_new ();
+	drag = gtk_drag_new (sensor);
 	widget = gtk_weather_new ();
 	bubble = gtk_bubble_new ();
 	gtk_container_add (GTK_CONTAINER (bubble), widget);
-	gtk_widget_set_size_request (bubble, 150, 150);
+	gtk_widget_set_size_request (bubble, 200, 150);
 	gtk_container_add (GTK_CONTAINER (drag), bubble);
-	gtk_fixed_put (GTK_FIXED (fixed), drag, width - 325, height - 175);
+	gtk_container_add (GTK_CONTAINER (fixed), drag);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 375, height - 175);
 
 	gtk_widget_show_all (root);
 
