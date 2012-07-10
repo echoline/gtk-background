@@ -28,7 +28,7 @@ gtk_drag_move (GtkDrag *drag, GdkEventMotion *event, gpointer user_data)
 	if (priv->clicked)
 	{
 		gtk_drag_set_coords (drag, event->x_root - priv->ox,
-					event->y_root - priv->oy);
+					event->y_root - priv->oy, TRUE);
 	}
 }
 
@@ -90,7 +90,7 @@ gtk_drag_animate (GtkDrag *drag)
 	if (!priv->clicked)
 	{
 		gtk_drag_set_coords (drag, priv->object->position.x,
-					priv->object->position.y);
+					priv->object->position.y, FALSE);
 	}
 }
 
@@ -134,6 +134,27 @@ gtk_drag_init (GtkDrag *drag)
 			G_CALLBACK (gtk_drag_move), NULL);
 }
 
+static void
+gtk_drag_add_spacer (AkamaruObject *a, void *data)
+{
+	AkamaruObject *b = (AkamaruObject*)data;
+
+	if (a == b)
+		return;
+
+	AkamaruModel *model = GTK_DRAG_GET_PRIVATE (GTK_DRAG (a->data))->model;
+
+	akamaru_model_add_spacer (model, a, b, 150);
+}
+
+static void
+gtk_drag_add_spacers (AkamaruObject *object, void *data)
+{
+	AkamaruModel *model = (AkamaruModel*)data;
+
+	akamaru_model_for_each_object (model, gtk_drag_add_spacer, object);
+}
+
 GtkWidget*
 gtk_drag_new (Sensor *sensor, AkamaruModel *model)
 {
@@ -143,12 +164,16 @@ gtk_drag_new (Sensor *sensor, AkamaruModel *model)
 	priv->sensor = sensor;
 	priv->model = model;
 	priv->object = akamaru_model_add_object (priv->model, 0, 0, 1, ret); 
+	priv->object->gravity.x = priv->object->gravity.y = 0;
+
+	akamaru_model_for_each_object (priv->model, gtk_drag_add_spacers,
+					priv->model);
 
 	return GTK_WIDGET (ret);
 }
 
 void
-gtk_drag_set_coords (GtkDrag *drag, gdouble x, gdouble y)
+gtk_drag_set_coords (GtkDrag *drag, gdouble x, gdouble y, gboolean resetvel)
 {
 	GtkDragPrivate *priv = GTK_DRAG_GET_PRIVATE (drag);
 	GtkFixed *parent = GTK_FIXED (gtk_widget_get_parent (
@@ -156,6 +181,12 @@ gtk_drag_set_coords (GtkDrag *drag, gdouble x, gdouble y)
 
 	priv->object->position.x = x;
 	priv->object->position.y = y;
+
+	if (resetvel)
+	{
+		priv->object->previous_position.x = x;
+		priv->object->previous_position.y = y;
+	}
 
 	gtk_fixed_move (parent, GTK_WIDGET (drag), x, y);
 }

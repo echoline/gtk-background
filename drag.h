@@ -24,7 +24,7 @@ struct _GtkDragClass
 #define GTK_DRAG_GET_CLASS	(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_DRAG, GtkDragClass))
 
 GtkWidget* gtk_drag_new (Sensor *sensor, AkamaruModel *model);
-void gtk_drag_set_coords (GtkDrag *drag, gdouble x, gdouble y);
+void gtk_drag_set_coords (GtkDrag *drag, gdouble x, gdouble y, gboolean);
 void gtk_drag_get_coords (GtkDrag *drag, gdouble *x, gdouble *y);
 void gtk_drag_animate (GtkDrag *drag);
 

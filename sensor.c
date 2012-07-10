@@ -8,6 +8,7 @@ typedef struct _SensorPrivate SensorPrivate;
 struct _SensorPrivate
 {
 	GIOChannel *channel;
+	gdouble calibration[3];
 	gdouble heading;
 	gdouble pitch;
 	gdouble roll;
@@ -16,8 +17,8 @@ struct _SensorPrivate
 #define SENSOR_GET_PRIVATE(obj)	(G_TYPE_INSTANCE_GET_PRIVATE ((obj), SENSOR_TYPE, SensorPrivate))
 
 enum {
-    SIGNAL_UPDATED,
-    SIGNAL_LAST
+	SIGNAL_UPDATED,
+	SIGNAL_LAST
 };
 
 static guint sensor_signals[SIGNAL_LAST];
@@ -67,14 +68,25 @@ sensor_timeout_cb (gpointer data)
 static void
 sensor_init (Sensor *sensor)
 {
+	gchar *str;
 	SensorPrivate *priv = SENSOR_GET_PRIVATE (sensor);
 
-	int fd = open ("/tmp/arduino", O_RDONLY);
-	priv->channel = g_io_channel_unix_new (fd);
+	priv->channel = g_io_channel_new_file ("/tmp/arduino", "r", NULL);
 
 	if (priv->channel)
 	{
-		g_timeout_add (1, sensor_timeout_cb, sensor);
+		if (g_io_channel_read_line (priv->channel, &str,
+						NULL, NULL, NULL) 
+					== G_IO_STATUS_NORMAL)
+		{
+			if (sscanf (str, "heading %lf pitch %lf roll %lf",
+					&priv->calibration[0],
+					&priv->calibration[1],
+					&priv->calibration[2]) == 3)
+			{
+				g_timeout_add (1, sensor_timeout_cb, sensor);
+			}
+		}
 	}
 }
 
@@ -106,19 +118,19 @@ gdouble
 sensor_get_heading (Sensor *sensor)
 {
 	SensorPrivate *priv = SENSOR_GET_PRIVATE (sensor);
-	return priv->heading;
+	return priv->heading - priv->calibration[0];
 }
 
 gdouble
 sensor_get_pitch (Sensor *sensor)
 {
 	SensorPrivate *priv = SENSOR_GET_PRIVATE (sensor);
-	return priv->pitch;
+	return priv->pitch - priv->calibration[1];
 }
 
 gdouble
 sensor_get_roll (Sensor *sensor)
 {
 	SensorPrivate *priv = SENSOR_GET_PRIVATE (sensor);
-	return priv->roll;
+	return priv->roll - priv->calibration[2];
 }

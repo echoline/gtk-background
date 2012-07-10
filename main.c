@@ -1,3 +1,5 @@
+#define WEATHER 0
+
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
 #include "sensor.h"
@@ -6,10 +8,15 @@
 #include "clock.h"
 #include "meter.h"
 #include "info.h"
-#include "bubble.h"
-#include "weather/weather-widget.h"
+#if WEATHER
+	#include "bubble.h"
+	#include "weather/weather-widget.h"
+#endif
 #include "akamaru.h"
 #include "drag.h"
+
+// to keep track of whether the sensor has sent at least one update
+gboolean sensor_on = FALSE;
 
 static void
 gtk_drag_update (AkamaruObject *object, void *data)
@@ -20,32 +27,7 @@ gtk_drag_update (AkamaruObject *object, void *data)
 }
 
 static void
-spacing2 (AkamaruObject *b, void *data)
-{
-	AkamaruObject *a = (AkamaruObject*)data;
-	double x, y, dx, dy, distance, fraction;
-
-	if (a == b)
-		return;
-
-	x = a->position.x;
-	y = a->position.y;
-	dx = b->position.x - x;
-	dy = b->position.y - y;
-
-	distance = sqrt (dx*dx + dy*dy);
-	if (distance > 150)
-		return;
-
-	fraction = (distance - 150) / distance / 2;
-	a->position.x = x + dx * fraction;
-	a->position.y = y + dy * fraction;
-	b->position.x = x + dx * (1 - fraction);
-	b->position.y = y + dy * (1 - fraction);
-}
-
-static void
-spacing (AkamaruObject *object, void *data)
+walls (AkamaruObject *object, void *data)
 {
 	AkamaruModel *model = (AkamaruModel*)data;
 	double x = object->position.x, y = object->position.y;
@@ -53,18 +35,15 @@ spacing (AkamaruObject *object, void *data)
 	gint maxx, maxy;
 	gboolean bump = FALSE;
 
-	// other objects
-	akamaru_model_for_each_object (model, spacing2, object);
-
 	// walls
 	maxy = gdk_screen_height () - gtk_widget_get_allocated_height (
-					GTK_WIDGET (object->data));
+					GTK_WIDGET (object->data)) - 25;
 	maxx = gdk_screen_width () - gtk_widget_get_allocated_width (
-					GTK_WIDGET (object->data));
+					GTK_WIDGET (object->data)) - 25;
 
-	if (y < 0)
+	if (y < 50)
 	{
-		dy = 0 - y;
+		dy = 50 - y;
 		bump = TRUE;
 	}
 	else if (y > maxy)
@@ -73,9 +52,9 @@ spacing (AkamaruObject *object, void *data)
 		bump = TRUE;
 	}
 
-	if (x < 0)
+	if (x < 25)
 	{
-		dx = 0 - x;
+		dx = 25 - x;
 		bump = TRUE;
 	}
 	else if (x > maxx)
@@ -100,10 +79,23 @@ animate (gpointer data)
 	AkamaruModel *model = (AkamaruModel*)data;
 
 	akamaru_model_step (model, 1);
-	akamaru_model_for_each_object (model, spacing, model);
+
+	akamaru_model_for_each_object (model, walls, model);
 	akamaru_model_for_each_object (model, gtk_drag_update, NULL);
 
 	return TRUE;
+}
+
+static void
+animate_begin (Sensor *sensor, gpointer model)
+{
+
+	g_signal_handler_disconnect (sensor,
+				g_signal_handler_find (sensor,
+					G_SIGNAL_MATCH_FUNC,
+					0, 0, NULL,
+					G_CALLBACK (animate_begin),
+					0));
 }
 
 int
@@ -118,13 +110,15 @@ main (int argc, char **argv)
 	Sensor *sensor;
 	gint width;
 	gint height;
-	AkamaruModel model;
+	AkamaruModel *model;
 
 	gtk_init (&argc, &argv);
 
 	sensor = (Sensor*)sensor_new ();
-	akamaru_model_init (&model);
-	g_timeout_add (15, animate, &model);
+
+	model = g_new0 (AkamaruModel, 1);
+	akamaru_model_init (model);
+	model->constrain_iterations = 1;
 
 	width = gdk_screen_width ();
 	height = gdk_screen_height ();
@@ -156,39 +150,42 @@ main (int argc, char **argv)
 	widget = gtk_tray_new ();
 	gtk_container_add (GTK_CONTAINER (box), widget);
 
-	drag = gtk_drag_new (sensor, &model);
+	drag = gtk_drag_new (sensor, model);
 	widget = cpu_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), widget);
 	gtk_container_add (GTK_CONTAINER (fixed), drag);
-	gtk_drag_set_coords (GTK_DRAG (drag), width - 175, 25);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 180, 60, TRUE);
 
-	drag = gtk_drag_new (sensor, &model);
+	drag = gtk_drag_new (sensor, model);
 	widget = mem_init ();
 	gtk_widget_set_size_request (widget, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), widget);
 	gtk_container_add (GTK_CONTAINER (fixed), drag);
-	gtk_drag_set_coords (GTK_DRAG (drag), width - 175, 175);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 180, 210, TRUE);
 
-	drag = gtk_drag_new (sensor, &model);
+	drag = gtk_drag_new (sensor, model);
 	widget = gtk_clock_new ();
 	gtk_widget_set_size_request (widget, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), widget);
 	gtk_container_add (GTK_CONTAINER (fixed), drag);
-	gtk_drag_set_coords (GTK_DRAG (drag), width - 175, height - 175);
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 180, height - 180, TRUE);
 
-/*
-	drag = gtk_drag_new (sensor, &model);
+#if WEATHER
+	drag = gtk_drag_new (sensor, model);
 	widget = gtk_weather_new ();
 	bubble = gtk_bubble_new ();
 	gtk_container_add (GTK_CONTAINER (bubble), widget);
-	gtk_widget_set_size_request (bubble, 200, 150);
+	gtk_widget_set_size_request (bubble, 150, 150);
 	gtk_container_add (GTK_CONTAINER (drag), bubble);
 	gtk_container_add (GTK_CONTAINER (fixed), drag);
-	gtk_drag_set_coords (GTK_DRAG (drag), width - 375, height - 175);
-*/
+	gtk_drag_set_coords (GTK_DRAG (drag), width - 380, height - 180, TRUE);
+#endif
 
 	gtk_widget_show_all (root);
+
+//	g_signal_connect (sensor, "updated", G_CALLBACK (animate_begin), model);
+	g_timeout_add (15, animate, model);
 
 	gtk_main ();
 }
