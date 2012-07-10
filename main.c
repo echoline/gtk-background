@@ -111,6 +111,12 @@ main (int argc, char **argv)
 	gint width;
 	gint height;
 	AkamaruModel *model;
+	gboolean use_akamaru = FALSE;
+	gint i;
+
+	for (i = 1; i != argc; i++)
+		if (!g_strcmp0 (argv[i], "-a"))
+			use_akamaru = TRUE;
 
 	gtk_init (&argc, &argv);
 
@@ -185,7 +191,8 @@ main (int argc, char **argv)
 	gtk_widget_show_all (root);
 
 //	g_signal_connect (sensor, "updated", G_CALLBACK (animate_begin), model);
-	g_timeout_add (15, animate, model);
+	if (use_akamaru)
+		g_timeout_add (15, animate, model);
 
 	gtk_main ();
 }
